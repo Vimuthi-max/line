@@ -125,3 +125,162 @@ public class Assignment4 extends JPanel {
         f.setVisible(true);
     }
 }
+
+
+
+
+
+or 
+
+
+
+
+import java.awt.*;
+import javax.swing.*;
+
+public class Assignment4 extends JPanel {
+
+    // 1. Bresenham Line Drawing Algorithm
+    void bresenham(Graphics g, int x1, int y1, int x2, int y2) {
+
+        int dx = Math.abs(x2 - x1);
+        int dy = Math.abs(y2 - y1);
+
+        int sx = (x1 < x2) ? 1 : -1;
+        int sy = (y1 < y2) ? 1 : -1;
+
+        int err = dx - dy;
+
+        while (true) {
+            g.fillRect(x1, y1, 2, 2);
+
+            if (x1 == x2 && y1 == y2)
+                break;
+
+            int e = 2 * err;
+
+            if (e > -dy) {
+                err = err - dy;
+                x1 = x1 + sx;
+            }
+
+            if (e < dx) {
+                err = err + dx;
+                y1 = y1 + sy;
+            }
+        }
+    }
+
+    // 2. Translation Method
+    void translate(int[][] xy, int tx, int ty) {
+
+        for (int i = 0; i < xy.length; i++) {
+            xy[i][0] = xy[i][0] + tx;
+            xy[i][1] = xy[i][1] + ty;
+        }
+    }
+
+    // 3. Scaling Method
+    void scale(int[][] xy, double sx, double sy) {
+
+        for (int i = 0; i < xy.length; i++) {
+            xy[i][0] = (int) Math.round(xy[i][0] * sx);
+            xy[i][1] = (int) Math.round(xy[i][1] * sy);
+        }
+    }
+
+    // 4. Rotation Method
+    void rotate(int[][] xy, double angle) {
+
+        double rad = Math.toRadians(angle);
+
+        for (int i = 0; i < xy.length; i++) {
+
+            int x = xy[i][0];
+            int y = xy[i][1];
+
+            int newX = (int) Math.round(
+                x * Math.cos(rad) - y * Math.sin(rad));
+
+            int newY = (int) Math.round(
+                x * Math.sin(rad) + y * Math.cos(rad));
+
+            xy[i][0] = newX;
+            xy[i][1] = newY;
+        }
+    }
+
+    // 5. Draw a polygon using Bresenham
+    void drawPolygon(Graphics g, int[][] xy) {
+
+        for (int i = 0; i < xy.length; i++) {
+
+            int next = (i + 1) % xy.length;
+
+            bresenham(g,
+                xy[i][0], xy[i][1],
+                xy[next][0], xy[next][1]);
+        }
+    }
+
+    // 6. Draw one transformed house
+    void house(Graphics g, int angle, int tx, int ty, Color c) {
+
+        int[][] base = {
+            {-100, 100}, {100, 100},
+            {100, 300}, {-100, 300}
+        };
+
+        int[][] roof = {
+            {-100, 100}, {0, 0}, {100, 100}
+        };
+
+        int[][] door = {
+            {-30, 300}, {30, 300},
+            {30, 220}, {-30, 220}
+        };
+
+        int[][][] shapes = {base, roof, door};
+
+        for (int i = 0; i < shapes.length; i++) {
+
+            scale(shapes[i], 0.6, 0.6);
+            rotate(shapes[i], angle);
+            translate(shapes[i], tx, ty);
+        }
+
+        g.setColor(c);
+
+        drawPolygon(g, base);
+        drawPolygon(g, roof);
+        drawPolygon(g, door);
+    }
+
+    // 7. Draw four houses
+    @Override
+    protected void paintComponent(Graphics g) {
+
+        super.paintComponent(g);
+
+        int cx = getWidth() / 2;
+        int cy = getHeight() / 2;
+
+        house(g, 0, cx, cy - 250, Color.RED);
+        house(g, 90, cx + 250, cy, Color.GREEN);
+        house(g, 180, cx, cy + 250, Color.ORANGE);
+        house(g, 270, cx - 250, cy, Color.MAGENTA);
+    }
+
+    // 8. Main Method
+    public static void main(String[] args) {
+
+        JFrame f = new JFrame("Assignment 4");
+
+        f.add(new Assignment4());
+
+        f.setSize(700, 750);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setLocationRelativeTo(null);
+        f.setVisible(true);
+    }
+}
