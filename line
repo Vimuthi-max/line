@@ -1,0 +1,127 @@
+
+import java.awt.*;
+import javax.swing.*;
+
+public class Assignment4 extends JPanel {
+
+    // 1. Bresenham Line Drawing Algorithm
+    void drawLine(Graphics g, int x1, int y1, int x2, int y2) {
+    	
+    	int dx = Math.abs(x2 - x1);
+        int dy = Math.abs(y2 - y1);
+
+        int sx = (x1 < x2) ? 1 : -1;
+        int sy = (y1 < y2) ? 1 : -1;
+
+        int err = dx - dy;
+
+        while (true) {
+
+            g.fillRect(x1, y1, 2, 2);
+
+            if (x1 == x2 && y1 == y2) {
+                break;
+            }
+
+            int e = 2 * err;
+
+            if (e > -dy) {
+                err = err - dy;
+                x1 = x1 + sx;
+            }
+
+            if (e < dx) {
+                err = err + dx;
+                y1 = y1 + sy;
+            }
+        }
+    }
+
+    // 2. Transform one coordinate
+    int[] transform(int x, int y, int angle, int tx, int ty) {
+
+        // Scaling
+        double sx = x * 0.6;
+        double sy = y * 0.6;
+
+        double rx = sx;
+        double ry = sy;
+
+        // Rotation
+        if (angle == 90) {
+            rx = -sy;
+            ry = sx;
+        }
+        else if (angle == 180) {
+            rx = -sx;
+            ry = -sy;
+        }
+        else if (angle == 270) {
+            rx = sy;
+            ry = -sx;
+        }
+
+        // Translation
+        int fx = (int) Math.round(rx + tx);
+        int fy = (int) Math.round(ry + ty);
+
+        return new int[] {fx, fy};
+    }
+
+    // Transform and draw one line
+    void line(Graphics g, int x1, int y1,int x2, int y2, int angle,int tx, int ty) {
+
+        int[] p1 = transform(x1, y1, angle, tx, ty);
+        int[] p2 = transform(x2, y2, angle, tx, ty);
+
+        drawLine(g, p1[0], p1[1], p2[0], p2[1]);
+    }
+
+    // complete house
+    void house(Graphics g, int angle,
+               int tx, int ty, Color c) {
+
+        g.setColor(c);
+
+        // Base
+        line(g, -100, 100, 100, 100, angle, tx, ty);
+        line(g, 100, 100, 100, 300, angle, tx, ty);
+        line(g, 100, 300, -100, 300, angle, tx, ty);
+        line(g, -100, 300, -100, 100, angle, tx, ty);
+
+        // Roof
+        line(g, -100, 100, 0, 0, angle, tx, ty);
+        line(g,0,0,100,100,angle,tx,ty);
+
+        // Door
+        line(g, -30, 300, 30, 300, angle, tx, ty);
+       line(g, 30, 300, 30, 220, angle, tx, ty);
+      line(g, 30, 220, -30, 220, angle, tx, ty);
+    line(g, -30, 220, -30, 300, angle, tx, ty);
+    }
+
+    // 5. Draw four transformed houses
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        house(g, 0, getWidth() / 2, getHeight()/2-250, Color.RED);
+        
+        
+        house(g, 90, getWidth() / 2 + 250,getHeight()/2, Color.GREEN);
+        
+        house(g, 180, getWidth() / 2,getHeight() /2+250, Color.ORANGE);
+        
+        house(g, 270, getWidth()/2 - 250,getHeight() / 2,Color.MAGENTA);
+    }
+    
+    // 6. Main method
+    public static void main(String[] args) {
+        JFrame f = new JFrame("Assignment 4");
+
+        f.add(new Assignment4());
+        f.setSize(700, 750);
+        f.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        f.setLocationRelativeTo(null);
+        f.setVisible(true);
+    }
+}
