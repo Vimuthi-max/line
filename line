@@ -130,6 +130,15 @@ public class Assignment4 extends JPanel {
 
 
 
+
+
+
+
+
+
+
+
+
 or 
 
 
@@ -283,4 +292,112 @@ public class Assignment4 extends JPanel {
         f.setLocationRelativeTo(null);
         f.setVisible(true);
     }
+}
+
+
+
+
+
+
+
+
+
+
+
+or
+
+
+//face
+
+import javax.swing.*;
+import java.awt.*;
+
+public class face extends JPanel{
+	
+	void drawLine(Graphics g,int x1,int y1,int x2,int y2) {
+		
+		int dx=Math.abs(x2-x1);
+		int dy=Math.abs(y2-y1);
+		
+		int sx=(x2>x1)? 1:-1;
+		int sy=(y2>y1)? 1:-1;
+		
+		int err=dx-dy;
+		
+		while(true) {
+			g.fillRect(x1,y1,2,2);
+			
+			if(x1==x2 && y1==y2)
+				break;
+		
+			int e=2*err;
+			if(e>-dy) {
+				err=err-dy;
+				x1=x1+sx;
+			}
+			if(e<dx) {
+				err=err+dx;
+				y1=y1+sy;
+			}
+	}
+		}
+	
+	void drawCircle(Graphics g,int xc,int yc,int r) {
+		
+		int x=0;
+		int y=r;
+		int p=1-r;          //3-2r;(bres)
+		
+		while(x<=y) {
+			g.fillRect(xc + x ,yc + y, 2,2);
+			g.fillRect(xc - x ,yc + y, 2,2);
+			g.fillRect(xc + x ,yc - y, 2,2);
+			g.fillRect(xc - x ,yc - y, 2,2);
+			g.fillRect(xc + y ,yc + x, 2,2);
+			g.fillRect(xc - y ,yc + x, 2,2);
+			g.fillRect(xc + y ,yc - x, 2,2);
+			g.fillRect(xc - y ,yc - x, 2,2);
+			
+			if(p<0) {           //   if(d<0)
+				p=p+2*x+3;      //    d=d+4*x+6
+			}
+			else {
+				p=p+2*(x-y)+5 ;
+					y--;	
+			}
+			x++;
+		}
+	}
+	
+	protected void paintComponent(Graphics g) {
+		super.paintComponent(g);
+		
+		g.setColor(Color.PINK);
+		
+		int xc=getWidth()/2;
+		int yc=getHeight()/2;
+		drawCircle(g,250,250,120);
+		drawCircle(g,215,225,20);
+		drawCircle(g,285,225,20);
+		drawCircle(g,285,225,20);
+		g.setColor(Color.RED);
+		g.drawArc(200, 220, 100, 90, 180, 180);
+		
+		g.setColor(Color.BLACK);
+		drawLine(g, 195, 195, 235, 208); // Left Eyebrow
+		drawLine(g, 265, 208, 305, 195); // Right Eyebrow
+		
+		
+		
+	}
+	
+	public static void main(String [] args) {
+		JFrame frame =new JFrame("draw the face");
+		
+		frame.add(new face());
+		frame.setSize(700,700);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setVisible(true);
+		
+	}
 }
